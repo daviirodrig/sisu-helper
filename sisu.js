@@ -1,10 +1,22 @@
 //let mainUrl = "https://sisu-api-pcr.apps.mec.gov.br/api/v1/oferta/$no_oferta/modalidades"
 
 console.log("SiSU Helper started");
-setTimeout(function () {
+const run = () => {
   let cardsCursos = window.document.querySelectorAll(".card-vaga");
 
   console.log("peguei cards");
+
+  let texts = {
+    0: "Ampla",
+    1: "Renda",
+    2: "PPI Renda",
+    5: "EM Pública",
+    6: "PPI",
+    9: "Def Renda",
+    10: "PPI Def Renda",
+    13: "Def EM Pública",
+    14: "PPI Def",
+  };
 
   cardsCursos.forEach((v) => {
     let ofertaId = v.href.match(/(\d.*)(#)/)[1];
@@ -12,25 +24,35 @@ setTimeout(function () {
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        let jsonRenda = data.modalidades.filter(
-          (i) => i.co_concorrencia == "1"
-        )[0];
-        let notaRenda = jsonRenda.nu_nota_corte;
-        let insertHtmlRenda = `<span style="padding-top: 1px" class="ies"> Nota renda: ${notaRenda}</span>`;
-        v.querySelector(".periodo").insertAdjacentHTML(
-          "afterend",
-          insertHtmlRenda
-        );
-        let jsonAmpla = data.modalidades.filter(
-          (i) => i.co_concorrencia == "0"
-        )[0];
-        let notaAmpla = jsonAmpla.nu_nota_corte;
-        let insertHtmlAmpla = `<span style="padding-top: 1px" class="ies"> Nota Ampla: ${notaAmpla}</span>`;
-        v.querySelector(".periodo").insertAdjacentHTML(
-          "afterend",
-          insertHtmlAmpla
-        );
+        data.modalidades.forEach((jsonData) => {
+          let notaCorte = jsonData.nu_nota_corte;
+          if (notaCorte != ".00") {
+            let notaText = texts[jsonData.co_concorrencia];
+            let insertHtml = `<span style="padding-top: 1px" class="ies"> ${notaText}: ${notaCorte}</span>`;
+            //v.querySelector(".item-footer").remove();
+            v.querySelector(".periodo").insertAdjacentHTML(
+              "afterend",
+              insertHtml
+            );
+          }
+        });
       })
       .catch(console.error);
+    let nVagas = v.querySelector(
+      ".item-footer > span.nota > strong"
+    ).textContent;
+    v.insertAdjacentHTML(
+      "beforeend",
+      `<span style="padding-top: 1px" class="ies"> Total VAGAS: ${nVagas}</span>`
+    );
+    v.querySelector(".item-footer").remove();
   });
-}, 3500);
+};
+setTimeout(() => {
+  document
+    .querySelector(".open-filtro.pull-right")
+    .insertAdjacentHTML("afterend", `<button id="butao">Run</button>`);
+  document.querySelector("#butao").addEventListener("click", () => run());
+
+  run();
+}, 3000);
