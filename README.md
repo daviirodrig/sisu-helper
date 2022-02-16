@@ -6,7 +6,7 @@ Extensão para navegadores que auxilia na exibição de notas de corte no SiSU
 
 Baixe a extensão como zip por [aqui](https://github.com/daviirodrig/sisu-helper/archive/refs/heads/main.zip) e extraia os arquivos em uma pasta
 
-Entre em [chrome://extensions](chrome://extensions)
+Digite chrome://extensions na barra de endereço do navegador
 
 Ative o modo de desenvolvedor no canto superior direito
 
